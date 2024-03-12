@@ -1,50 +1,27 @@
-name: Build and Push Nginx Image
+name: Build and Push Docker Image
 
 on:
   push:
     branches:
       - main
-  release:
-    types:
-      - created
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Print 
-        shell: bash
-        env: 
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKER_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: 
-          'echo "$DOCKERHUB_USERNAME" | base64'
-         
-      - name: Print 
-        shell: bash
-        env: 
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKER_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: 
-          'echo "$DOCKERHUB_TOKEN" | base64'
-          
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          tags: |
-            aryap-putra/syseng:${{ github.sha }}
-      - name: Push to Docker Hub
-        run: docker push aryap-putra/syseng:${{ github.sha }}
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: aryapputra/syseng:latest
